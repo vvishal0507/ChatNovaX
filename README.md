@@ -1,6 +1,6 @@
 # ChatNovaX 💬
 
-Modern real-time chat application with private messaging, rooms, authentication, and OTP system. 🚀
+A modern real-time chat application with private messaging, rooms, authentication, and OTP system.🚀
 
 ## 🔥 Features
 - Private Chat
@@ -17,7 +17,10 @@ Modern real-time chat application with private messaging, rooms, authentication,
 ## 🚀 How to Run
 1. Clone repo  
 2. npm install  
-3. npm start  
+3. npm start
+
+## 📌 Status
+Working project. More updates coming soon.
 
 ## 👨‍💻 Developer
 [@vvishal0507](https://github.com/vvishal0507)
