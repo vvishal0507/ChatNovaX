@@ -2,308 +2,124 @@ const API_BASE = (() => {
   const host = window.location.hostname;
   const origin = window.location.origin;
 
-  // Render / live server
-  if (
-    host.includes("onrender.com") ||
-    host !== "127.0.0.1" && host !== "localhost"
-  ) {
+  if (host.includes("onrender.com") || (host !== "127.0.0.1" && host !== "localhost")) {
     return `${origin}/api`;
   }
 
-  // Local development
   return "http://localhost:5000/api";
 })();
 
+async function apiRequest(url, method = "GET", data = null, token = "") {
+  try {
+    const options = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+
+    if (token) {
+      options.headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE}${url}`, options);
+
+    let result;
+    try {
+      result = await response.json();
+    } catch (jsonError) {
+      result = {
+        success: false,
+        message: "Invalid JSON response from server",
+      };
+    }
+
+    if (!response.ok) {
+      return {
+        success: false,
+        message: result.message || `Request failed with status ${response.status}`,
+        status: response.status,
+        data: result,
+      };
+    }
+
+    return result;
+  } catch (error) {
+    console.error("apiRequest error:", error);
+    return {
+      success: false,
+      message: "Unable to connect to server",
+      error: error.message,
+    };
+  }
+}
+
 const AuthAPI = {
-  async register(userData) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during registration",
-        error: error.message,
-      };
-    }
+  register(userData) {
+    return apiRequest("/auth/register", "POST", userData);
   },
 
-  async verifyOtp(email, otp) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/verify-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp }),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during OTP verification",
-        error: error.message,
-      };
-    }
+  verifyOtp(email, otp) {
+    return apiRequest("/auth/verify-otp", "POST", { email, otp });
   },
 
-  async resendOtp(email) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/resend-otp`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during OTP resend",
-        error: error.message,
-      };
-    }
+  resendOtp(email) {
+    return apiRequest("/auth/resend-otp", "POST", { email });
   },
 
-  async login(email, password) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during login",
-        error: error.message,
-      };
-    }
+  login(email, password) {
+    return apiRequest("/auth/login", "POST", { email, password });
   },
 
-  async forgotPassword(email) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/forgot-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email }),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during forgot password request",
-        error: error.message,
-      };
-    }
+  forgotPassword(email) {
+    return apiRequest("/auth/forgot-password", "POST", { email });
   },
 
-  async resetPassword(email, otp, newPassword) {
-    try {
-      const response = await fetch(`${API_BASE}/auth/reset-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, otp, newPassword }),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error during password reset",
-        error: error.message,
-      };
-    }
+  resetPassword(email, otp, newPassword) {
+    return apiRequest("/auth/reset-password", "POST", { email, otp, newPassword });
   },
 };
 
 const UserAPI = {
-  async getProfile(token) {
-    try {
-      const response = await fetch(`${API_BASE}/users/profile`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while fetching profile",
-        error: error.message,
-      };
-    }
+  getProfile(token) {
+    return apiRequest("/users/profile", "GET", null, token);
   },
 
-  async updateProfile(token, userData) {
-    try {
-      const response = await fetch(`${API_BASE}/users/profile`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(userData),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while updating profile",
-        error: error.message,
-      };
-    }
+  updateProfile(token, userData) {
+    return apiRequest("/users/profile", "PUT", userData, token);
   },
 
-  async getAllUsers(token) {
-    try {
-      const response = await fetch(`${API_BASE}/users`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while fetching users",
-        error: error.message,
-      };
-    }
+  getAllUsers(token) {
+    return apiRequest("/users", "GET", null, token);
   },
 };
 
 const ChatAPI = {
-  async getMessages(token, roomId = "") {
-    try {
-      const url = roomId
-        ? `${API_BASE}/chat/messages?roomId=${encodeURIComponent(roomId)}`
-        : `${API_BASE}/chat/messages`;
-
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while fetching messages",
-        error: error.message,
-      };
-    }
+  getMessages(token, roomId = "") {
+    const url = roomId
+      ? `/chat/messages?roomId=${encodeURIComponent(roomId)}`
+      : "/chat/messages";
+    return apiRequest(url, "GET", null, token);
   },
 
-  async sendMessage(token, messageData) {
-    try {
-      const response = await fetch(`${API_BASE}/chat/messages`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(messageData),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while sending message",
-        error: error.message,
-      };
-    }
+  sendMessage(token, messageData) {
+    return apiRequest("/chat/messages", "POST", messageData, token);
   },
 
-  async getRooms(token) {
-    try {
-      const response = await fetch(`${API_BASE}/chat/rooms`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while fetching rooms",
-        error: error.message,
-      };
-    }
+  getRooms(token) {
+    return apiRequest("/chat/rooms", "GET", null, token);
   },
 
-  async createRoom(token, roomData) {
-    try {
-      const response = await fetch(`${API_BASE}/chat/rooms`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(roomData),
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while creating room",
-        error: error.message,
-      };
-    }
+  createRoom(token, roomData) {
+    return apiRequest("/chat/rooms", "POST", roomData, token);
   },
 
-  async getOnlineUsers(token) {
-    try {
-      const response = await fetch(`${API_BASE}/chat/online-users`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return await response.json();
-    } catch (error) {
-      return {
-        success: false,
-        message: "Server error while fetching online users",
-        error: error.message,
-      };
-    }
+  getOnlineUsers(token) {
+    return apiRequest("/chat/online-users", "GET", null, token);
   },
 };
 
@@ -331,10 +147,11 @@ function getCurrentUser() {
 function logoutUser() {
   localStorage.removeItem("chatnovax_token");
   localStorage.removeItem("chatnovax_user");
-  window.location.href = "login.html";
+  window.location.href = "/login";
 }
 
 window.API_BASE = API_BASE;
+window.apiRequest = apiRequest;
 window.AuthAPI = AuthAPI;
 window.UserAPI = UserAPI;
 window.ChatAPI = ChatAPI;
@@ -342,33 +159,3 @@ window.saveAuth = saveAuth;
 window.getToken = getToken;
 window.getCurrentUser = getCurrentUser;
 window.logoutUser = logoutUser;
-
-async function apiRequest(url, method = "GET", data = null, token = "") {
-  try {
-    const options = {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    };
-
-    if (data) {
-      options.body = JSON.stringify(data);
-    }
-
-    if (token) {
-      options.headers.Authorization = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE}${url}`, options);
-    return await response.json();
-  } catch (error) {
-    return {
-      success: false,
-      message: "API request failed",
-      error: error.message,
-    };
-  }
-}
-
-window.apiRequest = apiRequest;
