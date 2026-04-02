@@ -342,3 +342,33 @@ window.saveAuth = saveAuth;
 window.getToken = getToken;
 window.getCurrentUser = getCurrentUser;
 window.logoutUser = logoutUser;
+
+async function apiRequest(url, method = "GET", data = null, token = "") {
+  try {
+    const options = {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+
+    if (token) {
+      options.headers.Authorization = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${API_BASE}${url}`, options);
+    return await response.json();
+  } catch (error) {
+    return {
+      success: false,
+      message: "API request failed",
+      error: error.message,
+    };
+  }
+}
+
+window.apiRequest = apiRequest;
