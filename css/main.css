@@ -1,0 +1,34 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1d4ed8);
+  min-height: 100vh;
+  color: white;
+}
+.hero {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+.hero-card {
+  width: 100%;
+  max-width: 700px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  backdrop-filter: blur(12px);
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+}
+.hero-card h1 { font-size: 54px; margin-bottom: 16px; }
+.hero-card p { font-size: 18px; opacity: 0.9; margin-bottom: 28px; }
+.hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.btn {
+  text-decoration: none;
+  color: white;
+  border: 1px solid rgba(255,255,255,0.3);
+  padding: 14px 22px;
+  border-radius: 14px;
+}
+.btn.primary { background: #4f46e5; border-color: #4f46e5; }

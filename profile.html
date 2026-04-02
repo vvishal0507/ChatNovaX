@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - ChatNovaX</title>
+  <link rel="stylesheet" href="css/profile.css" />
+</head>
+<body>
+  <div class="profile-wrap">
+    <form class="profile-card" id="profileForm">
+      <h1>Your Profile</h1>
+      <input type="text" id="name" placeholder="Name" />
+      <input type="text" id="profilePic" placeholder="Profile Image URL" />
+      <input type="text" id="gender" placeholder="Gender" />
+      <input type="text" id="country" placeholder="Country" />
+      <input type="text" id="state" placeholder="State" />
+      <textarea id="bio" placeholder="Bio"></textarea>
+      <button type="submit">Save Profile</button>
+      <p id="message"></p>
+      <a href="chat.html">Go to Chat</a>
+    </form>
+  </div>
+  <script src="js/api.js"></script>
+  <script src="js/profile.js"></script>
+</body>
+</html>

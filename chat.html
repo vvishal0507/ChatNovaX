@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chat - ChatNovaX</title>
+  <link rel="stylesheet" href="css/chat.css" />
+</head>
+<body>
+  <div class="chat-app">
+    <aside class="sidebar">
+      <div class="brand">ChatNovaX</div>
+      <div class="current-user" id="currentUserBox"></div>
+
+      <div class="section">
+        <h3>Online Users</h3>
+        <div id="onlineUsersList"></div>
+      </div>
+
+      <div class="section">
+        <h3>All Users</h3>
+        <div id="usersList"></div>
+      </div>
+
+      <div class="section">
+        <h3>Rooms</h3>
+        <div class="create-room">
+          <input type="text" id="roomNameInput" placeholder="New room name" />
+          <button id="createRoomBtn">Create</button>
+        </div>
+        <div id="roomsList"></div>
+      </div>
+
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </aside>
+
+    <main class="chat-main">
+      <div class="chat-header" id="chatHeader">Select a user or room</div>
+      <div class="chat-messages" id="chatMessages"></div>
+      <form class="chat-form" id="messageForm">
+        <input type="text" id="messageInput" placeholder="Type your message..." autocomplete="off" />
+        <button type="submit">Send</button>
+      </form>
+    </main>
+  </div>
+
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/socket.js"></script>
+  <script src="js/chat.js"></script>
+</body>
+</html>
